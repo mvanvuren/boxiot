@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sqlite3
 from sqlite3 import Error
 from gtts import gTTS
@@ -57,7 +58,7 @@ def speak(text):
 
 
 def main():
-    database = r"D:\projects\boxiot2\boxiot.db"
+    database = r"./boxiot.db"
 
     # create a database connection
     conn = create_connection(database)
