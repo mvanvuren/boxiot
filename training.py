@@ -2,9 +2,9 @@
 import sqlite3
 from sqlite3 import Error
 from gtts import gTTS
+import pyglet
 import os
 import hashlib
-from playsound import playsound
 import time
 
 
@@ -45,32 +45,33 @@ def get_training(conn, training_id):
     return training
 
 
-def speak(text):
+def speak(text, type='clause', repetition=1):
     print(text)
     md5 = hashlib.md5(text.encode())
     md5hex = md5.hexdigest()
-    filename = "./mp3/misc/{}.mp3".format(md5hex)
+    filename = './mp3/{}/{}.mp3'.format(type, md5hex)
     if not os.path.isfile(filename):
         tts = gTTS(text)
         tts.save(filename)
-    playsound(filename)
-    time.sleep(1)
+    music = pyglet.media.load(filename)  # , streaming=False)
+    for i in range(repetition):
+        player = music.play()
+        player.on_eos = pyglet.app.exit
+        pyglet.app.run()
+        music.seek(0)
+        time.sleep(0.5)
 
 
 def main():
     database = r"./boxiot.db"
 
-    # create a database connection
     conn = create_connection(database)
     with conn:
         training = get_training(conn, 1)
         for (id, pattern, text, level, repetition, md5) in training:
-            speak('combination {}. {} times.'.format(id, repetition))
-            for i in range(repetition):
-                print(i + 1, text)
-                filename = "./mp3/{}.mp3".format(md5)
-                playsound(filename)
-                time.sleep(1)
+            introduction = 'combination {}. {} times.'.format(id, repetition)
+            speak(introduction)
+            speak(text, 'combination', repetition)
 
 
 if __name__ == '__main__':
