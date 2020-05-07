@@ -7,6 +7,7 @@ import os
 import hashlib
 import time
 
+
 def create_connection(db_file):
     conn = None
     try:
@@ -43,11 +44,11 @@ def get_training(conn, training_id):
 
     return training
 
-def speak(text, type='clause', repetition=1):
+
+def speak(text, type='clause', repetition=1, pause=0.5):
     print(text)
-    md5 = hashlib.md5(text.encode())
-    md5hex = md5.hexdigest()
-    filename = './mp3/{}/{}.mp3'.format(type, md5hex)
+    filename = './mp3/{}/{}.mp3'.format(type,
+                                        hashlib.md5(text.encode()).hexdigest())
     if not os.path.isfile(filename):
         tts = gTTS(text)
         tts.save(filename)
@@ -57,8 +58,9 @@ def speak(text, type='clause', repetition=1):
         mixer.music.play()
         while mixer.music.get_busy() == True:
             pass
-        time.sleep(0.5)
+        time.sleep(pause)
         mixer.music.rewind()
+
 
 def main():
     database = r"./boxiot.db"
@@ -67,8 +69,7 @@ def main():
     with conn:
         training = get_training(conn, 1)
         for (id, pattern, text, level, repetition, md5) in training:
-            introduction = 'combination {}. {} times.'.format(id, repetition)
-            speak(introduction)
+            speak('combination {}. {} times.'.format(id, repetition))
             speak(text, 'combination', repetition)
 
 
