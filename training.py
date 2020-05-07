@@ -2,11 +2,10 @@
 import sqlite3
 from sqlite3 import Error
 from gtts import gTTS
-import pyglet
+from pygame import mixer
 import os
 import hashlib
 import time
-
 
 def create_connection(db_file):
     conn = None
@@ -44,7 +43,6 @@ def get_training(conn, training_id):
 
     return training
 
-
 def speak(text, type='clause', repetition=1):
     print(text)
     md5 = hashlib.md5(text.encode())
@@ -53,14 +51,14 @@ def speak(text, type='clause', repetition=1):
     if not os.path.isfile(filename):
         tts = gTTS(text)
         tts.save(filename)
-    music = pyglet.media.load(filename)  # , streaming=False)
+    mixer.init()
+    mixer.music.load(filename)
     for i in range(repetition):
-        player = music.play()
-        player.on_eos = pyglet.app.exit
-        pyglet.app.run()
-        music.seek(0)
+        mixer.music.play()
+        while mixer.music.get_busy() == True:
+            pass
         time.sleep(0.5)
-
+        mixer.music.rewind()
 
 def main():
     database = r"./boxiot.db"
