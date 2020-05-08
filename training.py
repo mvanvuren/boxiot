@@ -8,17 +8,17 @@ import hashlib
 import time
 
 
-def create_connection(db_file):
-    conn = None
+def create_connection(database_file):
+    connection = None
     try:
-        conn = sqlite3.connect(db_file)
+        connection = sqlite3.connect(database_file)
     except Error as e:
         print(e)
 
-    return conn
+    return connection
 
 
-def get_training(conn, training_id):
+def get_training(connection, training_id):
 
     sql = '''
         SELECT
@@ -37,12 +37,17 @@ def get_training(conn, training_id):
         ORDER BY
             tcs.SequenceId
     '''
-    cur = conn.cursor()
-    cur.execute(sql, (training_id,))
+    cursor = connection.cursor()
+    cursor.execute(sql, (training_id,))
 
-    training = cur.fetchall()
+    training = cursor.fetchall()
 
     return training
+
+
+def wait_while_playing():
+    while mixer.music.get_busy() == True:
+        pass
 
 
 def speak(text, type='clause', repetition=1, pause=0.5):
@@ -56,8 +61,7 @@ def speak(text, type='clause', repetition=1, pause=0.5):
     mixer.music.load(filename)
     for i in range(repetition):
         mixer.music.play()
-        while mixer.music.get_busy() == True:
-            pass
+        wait_while_playing()
         time.sleep(pause)
         mixer.music.rewind()
 
@@ -65,9 +69,9 @@ def speak(text, type='clause', repetition=1, pause=0.5):
 def main():
     database = r"./boxiot.db"
 
-    conn = create_connection(database)
-    with conn:
-        training = get_training(conn, 1)
+    connection = create_connection(database)
+    with connection:
+        training = get_training(connection, 1)
         for (id, pattern, text, level, repetition, md5) in training:
             speak('combination {}. {} times.'.format(id, repetition))
             speak(text, 'combination', repetition)
