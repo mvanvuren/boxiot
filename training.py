@@ -1,11 +1,19 @@
 #!/usr/bin/python3
+import hashlib
+import os
 import sqlite3
+import time
+from enum import Enum
 from sqlite3 import Error
+
 from gtts import gTTS
 from pygame import mixer
-import os
-import hashlib
-import time
+
+
+class SpeakType(Enum):
+    Clause = 1
+    Combination = 2
+    Test = 3
 
 
 def create_connection(database_file):
@@ -50,13 +58,16 @@ def wait_while_playing():
         pass
 
 
-def speak(text, type='clause', repetition=1, pause=0.5):
-    print(text)
-    filename = './mp3/{}/{}.mp3'.format(type,
-                                        hashlib.md5(text.encode()).hexdigest())
+def get_audio_file(text, speak_type):
+    filename = f'./mp3/{speak_type.name.lower()}/{hashlib.md5(text.encode()).hexdigest()}.mp3'
     if not os.path.isfile(filename):
         tts = gTTS(text)
         tts.save(filename)
+
+
+def speak(text, speak_type=SpeakType.Clause, repetition=1, pause=0.5):
+    print(text)
+    get_audio_file(text, speak_type)
     mixer.init()
     mixer.music.load(filename)
     for i in range(repetition):
@@ -67,14 +78,12 @@ def speak(text, type='clause', repetition=1, pause=0.5):
 
 
 def main():
-    database = r"./boxiot.db"
-
-    connection = create_connection(database)
+    connection = create_connection(r"./boxiot.db")
     with connection:
         training = get_training(connection, 1)
         for (id, pattern, text, level, repetition, md5) in training:
-            speak('combination {}. {} times.'.format(id, repetition))
-            speak(text, 'combination', repetition)
+            speak(f'combination {id}. {repetition} times.')
+            speak(text, SpeakType.Combination, repetition)
 
 
 if __name__ == '__main__':
