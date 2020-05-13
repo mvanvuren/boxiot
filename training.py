@@ -59,15 +59,21 @@ def wait_while_playing():
 
 
 def get_audio_file(text, speak_type):
-    filename = f'./mp3/{speak_type.name.lower()}/{hashlib.md5(text.encode()).hexdigest()}.mp3'
+
+    speak_type_name = speak_type.name.lower()
+    md5 = hashlib.md5(text.encode()).hexdigest()
+    filename = f'./mp3/{speak_type_name}/{md5}.mp3'
+
     if not os.path.isfile(filename):
         tts = gTTS(text)
         tts.save(filename)
 
+    return filename
+
 
 def speak(text, speak_type=SpeakType.Clause, repetition=1, pause=0.5):
     print(text)
-    get_audio_file(text, speak_type)
+    filename = get_audio_file(text, speak_type)
     mixer.init()
     mixer.music.load(filename)
     for i in range(repetition):
