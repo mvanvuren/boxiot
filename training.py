@@ -31,11 +31,11 @@ def get_training(connection, training_id):
     sql = '''
         SELECT
             cns.Id
-        ,	cns.Pattern
+        --,	cns.Pattern
         ,	cns.Text
-        ,	cns.Level
+        --,	cns.Level
         ,	tcs.Repetition
-        ,	cns.MD5
+        --,	cns.MD5
         FROM 
             TrainingCombinations tcs
             INNER JOIN Combinations cns
@@ -76,7 +76,7 @@ def speak(text, speak_type=SpeakType.Clause, repetition=1, pause=0.5):
     filename = get_audio_file(text, speak_type)
     mixer.init()
     mixer.music.load(filename)
-    for i in range(repetition):
+    for _ in range(repetition):
         mixer.music.play()
         wait_while_playing()
         time.sleep(pause)
@@ -87,7 +87,7 @@ def main():
     connection = create_connection(r"./boxiot.db")
     with connection:
         training = get_training(connection, 1)
-        for (id, pattern, text, level, repetition, md5) in training:
+        for (id, text, repetition) in training:
             speak(f'combination {id}. {repetition} times.')
             speak(text, SpeakType.Combination, repetition)
 
