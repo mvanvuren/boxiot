@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 import hashlib
 import os
+import subprocess
 import sqlite3
 import time
 from enum import Enum
@@ -31,10 +32,10 @@ def get_training(connection, training_id):
     sql = '''
         SELECT
             cns.Id
-        --,	cns.Pattern
-        ,	cns.Text
+        ,   cns.Pattern
+        ,   cns.Text
         --,	cns.Level
-        ,	tcs.Repetition
+        ,   tcs.Repetition
         --,	cns.MD5
         FROM 
             TrainingCombinations tcs
@@ -52,6 +53,18 @@ def get_training(connection, training_id):
 
     return training
 
+
+def display_combination(pattern, text):
+    with open("combination.txt","w", encoding="utf-8") as cf:
+        cf.write("FillScrren,0x0000\n")
+        cf.write("SetFontDirection,3\n")
+        cf.write(f"DrawUTF8String,G32,40,4,{pattern},0xf000\n")
+        x = 64
+        parts = [p.strip() for p in text.split(".") if p != ""]
+        for part in parts:
+            cf.write(f"DrawUTF8String,G24,{x},4,{part},0xffff\n")
+            x += 24
+    subprocess.call(["./draw", "combination.txt"])
 
 def wait_while_playing():
     while mixer.music.get_busy() == True:
@@ -74,9 +87,10 @@ def get_audio_file(text, speak_type):
 def speak(text, speak_type=SpeakType.Clause, repetition=1, pause=0.5):
     print(text)
     filename = get_audio_file(text, speak_type)
-    mixer.init()
+    mixer.init(buffer=2048)
     mixer.music.load(filename)
-    for _ in range(repetition):
+    #for _ in range(repetition):
+    for _ in range(1):
         mixer.music.play()
         wait_while_playing()
         time.sleep(pause)
@@ -87,7 +101,8 @@ def main():
     connection = create_connection(r"./boxiot.db")
     with connection:
         training = get_training(connection, 1)
-        for (id, text, repetition) in training:
+        for (id, pattern, text, repetition) in training:
+            #display_combination(pattern, text)
             speak(f'combination {id}. {repetition} times.')
             speak(text, SpeakType.Combination, repetition)
 
