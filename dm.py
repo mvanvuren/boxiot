@@ -7,10 +7,10 @@ import sqlite3
 from sqlite3 import Error
 #import sys
 
-DB_FOLDER = "boxiot/database"
+DB_FOLDER = "database"
 DB_FILE = "boxiot.db"
 DB_SCHEMA = "schema.sql"
-CSV_FOLDER = "boxiot/database/csv"
+CSV_FOLDER = "database/csv"
 CSV_ACTIONS = "actions.csv"
 CSV_COMBINATIONS = "combinations.csv"
 

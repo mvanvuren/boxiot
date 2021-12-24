@@ -12,7 +12,7 @@ from sqlite3 import Error
 from gtts import gTTS
 from pygame import mixer
 
-DB_FOLDER = "boxiot/database"
+DB_FOLDER = "database"
 DB_FILE = "boxiot.db"
 
 class SpeakType(Enum):
@@ -71,17 +71,17 @@ def get_training(connection, training_id):
     return training
 
 
-def display_combination(pattern, text):
-    with open("combination.txt","w", encoding="utf-8") as cf:
-        cf.write("FillScrren,0x0000\n")
-        cf.write("SetFontDirection,3\n")
-        cf.write(f"DrawUTF8String,G32,40,4,{pattern},0xf000\n")
-        x = 64
-        parts = text.split(", ")
-        for part in parts:
-            cf.write(f"DrawUTF8String,G24,{x},4,{part},0xffff\n")
-            x += 24
-    subprocess.call(["./draw", "combination.txt"])
+# def display_combination(pattern, text):
+#     with open("draw/combination.txt","w", encoding="utf-8") as cf:
+#         cf.write("FillScrren,0x0000\n")
+#         cf.write("SetFontDirection,3\n")
+#         cf.write(f"DrawUTF8String,G32,40,4,{pattern},0xf000\n")
+#         x = 64
+#         parts = text.split(", ")
+#         for part in parts:
+#             cf.write(f"DrawUTF8String,G24,{x},4,{part},0xffff\n")
+#             x += 24
+#     subprocess.call(["draw/draw", "draw/combination.txt"])
 
 
 def wait_while_playing():
