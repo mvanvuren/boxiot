@@ -1,0 +1,1 @@
+PoC: using 2.4" LCD with Raspberry

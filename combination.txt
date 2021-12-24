@@ -1,4 +1,0 @@
-FillScrren,0x0000
-SetFontDirection,3
-DrawUTF8String,G32,40,4,4bpccw,0xf000
-DrawUTF8String,G24,64,4,right hook,0xffff

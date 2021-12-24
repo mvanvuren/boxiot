@@ -1,0 +1,25 @@
+Symbol,Text,ActionType
+1,jab,punch
+2,right hand,punch
+3,left hook,punch
+4,right hook,punch
+5,left uppercut,punch
+6,right uppercut,punch
+[],blocking,defense
+(),rolling,defense
+{},rolling under,defense
+//,lean away from,defense
+<>,pivot away from,defense
+p,pivot,movement
+pccw,pivot counter-clockwise,movement
+bp,backfoot pivot,movement
+bpccw,counter-clockwise backfoot pivot,movement
+ls,leftstep,movement
+rs,rightstep,movement
+bs,backstep,movement
+f,fake,movement
+t,tap,movement
+sl,slip left,movement
+sr,slip right,movement
+b,to body,place
+h,to head,place
