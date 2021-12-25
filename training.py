@@ -10,10 +10,12 @@ from enum import Enum
 from sqlite3 import Error
 
 from gtts import gTTS
+os.environ['PYGAME_HIDE_SUPPORT_PROMPT'] = "hide"
 from pygame import mixer
 
 DB_FOLDER = "database"
 DB_FILE = "boxiot.db"
+MP3_FOLDER = "mp3"
 
 class SpeakType(Enum):
     Introduction = 1
@@ -96,9 +98,9 @@ def get_audio_file(combination):
     speak = combination["Speak"]
     md5 = hashlib.md5(speak.encode()).hexdigest()
     if combination["SpeakType"] == SpeakType.Repetition:
-        filename = f"boxiot/mp3/{speak_type_name}-{md5}.mp3"
+        filename = f"{MP3_FOLDER}/{speak_type_name}-{md5}.mp3"
     else:
-        filename = f"boxiot/mp3/{speak_type_name}-{id}-{md5}.mp3"
+        filename = f"{MP3_FOLDER}/{speak_type_name}-{id}-{md5}.mp3"
 
     if not os.path.isfile(filename):
         
